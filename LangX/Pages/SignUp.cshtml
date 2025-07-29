@@ -1,0 +1,66 @@
+﻿@page
+@model SignUpModel
+@{
+    ViewData["Title"] = "Sign up";
+}
+<style>
+    .button-container {
+        display: flex;
+        justify-content: space-around;
+        gap: 10px;
+    }
+
+    .custom-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        border: 2px solid #007bff;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .custom-button img {
+            width: 50px;
+            height: 50px;
+        }
+
+        /* Highlight effect when selected */
+        .custom-button.active {
+            background-color: #0056b3; 
+            border: 2px solid yellow;
+        }
+</style>
+
+<link rel="stylesheet" href="styles.css">
+
+<div class="text-center">
+    <h1 class="display-4">LangX</h1>
+    <p>Sign up</p>
+</div>
+
+<body>
+    <form method="post">
+        <div class="center">
+            <input asp-for="Username" placeholder="Username" required/>
+        </div>
+        <div class="center">
+            <input asp-for="Name" placeholder="Name" required />
+        </div>
+        <div class="center">
+            <input asp-for="Email" placeholder="Email" required />
+        </div>
+        <div class="center">
+            <input asp-for="Password" placeholder="Password" required />
+        </div>
+                <div class="center-btn">
+            <button type="submit">Sign up</button>
+        </div>
+    </form>
+
+</body>
+

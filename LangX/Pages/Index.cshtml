@@ -1,0 +1,44 @@
+﻿@page
+@model LangX.Pages.IndexModel
+@{
+    ViewData["Title"] = "Login page";
+}
+<link rel="stylesheet" href="styles.css">
+
+
+<div class="text-center">
+    <h1 class="display-4">LangX</h1>
+    <p>Chat and learn languages with people from around the world!</p>
+</div>
+
+<body>
+    <form method="post">
+        <div class="center">
+            <label for="username">Username:</label>
+            <input type="text" id="Username" asp-for="Username" required />
+        </div>
+        <div class="center">
+            <label for="password">Password:</label>
+            <input type="password" id="Password" asp-for="Password" required />
+        </div>
+        <div class="center-btns">
+            <button type="submit">Sign in</button>
+            
+        </div>
+    </form >
+    <form method="post">
+        <div class="center">
+            <div class="center-btns">
+                <label>For demo purposes please use the button for the demo account, the sign in button is disabled for the purpose of the demo</label>
+                <button type="submit" asp-page-handler="DemoLogOn">Demo account</button>
+            </div>
+        </div>
+    </form>
+    <div class="text-center">
+        <br />
+        <h2 class="fw-bold">Bienvenue to LangX – Your French Learning Community!</h2>
+        <p>
+            Join a vibrant social platform where French learners connect, share, and grow together. Practice with interactive exercises, test your proficiency, and engage with others on the same journey to mastering French. Whether you're just starting out or looking to sharpen your skills—LangX makes learning French social, fun, and effective.
+        </p>
+    </div>
+</body>

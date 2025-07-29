@@ -1,0 +1,507 @@
+/* Base font sizing */
+html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+/* Focus styles */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+/* Root variables – French theme */
+:root {
+    --blue: #0055A4;
+    --white: #FFFFFF;
+    --red: #EF4135;
+    --light-blue: #5d8dc9;
+    --light-red: #f27971;
+    --bg-light: #f9f9f9;
+    --text-dark: #222;
+    --gray: #6c757d;
+    --light-gray: #e9ecef;
+    --border-color: #dee2e6;
+    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Body layout */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-main);
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    margin-bottom: 60px;
+}
+
+/* Header */
+header {
+    background: linear-gradient(to right, var(--blue), var(--white), var(--red));
+    text-align: center;
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+    header h1 {
+        margin: 0;
+        font-size: 2rem;
+    }
+
+/* Navigation bar */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    background-color: var(--white);
+    border-top: 3px solid var(--blue);
+    border-bottom: 3px solid var(--red);
+}
+
+    nav a {
+        color: var(--blue);
+        text-decoration: none;
+        font-weight: bold;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: background-color 0.3s;
+    }
+
+        nav a:hover {
+            background-color: var(--blue);
+            color: var(--white);
+        }
+
+/* Main form section */
+form {
+    max-width: 500px;
+    margin: 2rem auto;
+    background-color: var(--white);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Form alignment helpers */
+.center {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.2rem;
+}
+
+.center-btns,
+.center-btn {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Form input styling */
+input[type="text"],
+input[type="password"],
+input.form-control {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-top: 5px;
+}
+
+/* ====== BUTTON STYLING ====== */
+/* Standard button */
+button,
+.btn {
+    background-color: var(--blue);
+    color: var(--white);
+    border: none;
+    padding: 0.4rem 0.8rem; /* Reduced padding */
+    font-size: 0.9rem; /* Smaller font size */
+    border-radius: 4px; /* Smaller border radius */
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    button:hover,
+    .btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px); /* Slight lift effect */
+    }
+
+/* Button variations */
+.btn-primary {
+    background-color: var(--blue);
+    border-color: var(--blue);
+}
+
+    .btn-primary:hover {
+        background-color: #004488; /* Darker blue */
+        border-color: #004488;
+    }
+
+.btn-secondary {
+    background-color: var(--gray);
+    border-color: var(--gray);
+}
+
+.btn-danger,
+.btn-red {
+    background-color: var(--red);
+    border-color: var(--red);
+}
+
+    .btn-danger:hover,
+    .btn-red:hover {
+        background-color: #d13126; /* Darker red */
+        border-color: #d13126;
+    }
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+.btn-light {
+    background-color: var(--light-gray);
+    color: var(--text-dark);
+    border-color: var(--border-color);
+}
+
+    .btn-light:hover {
+        background-color: #dae0e5;
+        border-color: #d3d9df;
+    }
+
+/* Button sizes */
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+.btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1.1rem;
+}
+
+/* Special nav buttons */
+.btn-nav {
+    background: none;
+    color: black !important; /* Changed to explicit black color */
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-nav:hover {
+        background-color: var(--blue);
+        color: white !important; /* Keep hover text white for contrast */
+    }
+
+/* Like button and comment button */
+.like-button,
+.comment-toggle-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
+}
+
+    /* Like button when liked */
+    .like-button.liked {
+        color: var(--red);
+    }
+
+        .like-button.liked i {
+            color: var(--red);
+        }
+
+/* ====== END BUTTON STYLING ====== */
+
+/* Question/Answer boxes or cards */
+.question-box {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+}
+
+/* Card styling */
+.card {
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+.card-title {
+    color: var(--blue);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+/* Text alignment area */
+.text-center {
+    text-align: center;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* ===== UPDATED NAVBAR STYLING ===== */
+.navbar {
+    background: linear-gradient(to right, var(--blue), var(--white), var(--red)) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.navbar-brand {
+    color: var(--white) !important;
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.navbar-nav .nav-link {
+    color: var(--white) !important;
+    font-weight: 500;
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+    }
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+.navbar form button {
+    color: var(--white) !important;
+}
+
+.navbar-nav .nav-item {
+    padding: 0.25rem 0.5rem;
+    display: flex;
+    align-items: center;
+}
+/* ===== END NAVBAR STYLING ===== */
+
+/* Responsive navbar fixes */
+@media (max-width: 768px) {
+    .navbar-collapse {
+        width: 100%;
+        padding-top: 0.5rem;
+    }
+
+    .navbar-nav {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.25rem;
+    }
+
+        .navbar-nav .nav-item {
+            width: 100%;
+        }
+
+    .navbar-toggler {
+        margin-left: auto;
+        padding: 0.25rem 0.5rem; /* Smaller toggle button */
+    }
+}
+
+/* Success Message */
+.alert {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-dismissible .close {
+    padding: 0.75rem 1.25rem;
+}
+
+/* Container margins */
+.container.mt-4 {
+    margin-top: 1.5rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+/* Pagination styling */
+.pagination-container {
+    margin: 1.5rem 0;
+}
+
+.pagination .page-link {
+    color: var(--blue);
+    background-color: var(--white);
+    border-color: var(--border-color);
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--blue);
+    border-color: var(--blue);
+    color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: var(--gray);
+    pointer-events: none;
+    background-color: var(--white);
+    border-color: var(--border-color);
+}
+
+/* Loading spinner */
+.loading-spinner {
+    margin: 1.5rem auto;
+    text-align: center;
+}
+
+.spinner-border {
+    width: 2rem;
+    height: 2rem;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    background-color: var(--blue);
+    color: var(--white);
+    margin-top: 20rem;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    padding-top: 0.5rem !important; /* Reduce top padding */
+    padding-bottom: 0.5rem !important; /* Reduce bottom padding */
+    line-height: 1.2 !important; /* Reduce line height */
+    min-height: auto !important; /* Remove fixed height if any */
+    height: auto !important; /* Make height fit content */
+    font-size: 0.8rem !important; /* Smaller font size */
+}
+
+/* Utility classes */
+.d-flex {
+    display: flex !important;
+}
+
+.justify-content-center {
+    justify-content: center !important;
+}
+
+.justify-content-between {
+    justify-content: space-between !important;
+}
+
+.align-items-center {
+    align-items: center !important;
+}
+
+.gap-2 {
+    gap: 0.5rem !important;
+}
+
+.gap-3 {
+    gap: 1rem !important;
+}
+
+.mt-2 {
+    margin-top: 0.5rem !important;
+}
+
+.mt-3 {
+    margin-top: 1rem !important;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem !important;
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.ms-2 {
+    margin-left: 0.5rem !important;
+}
+
+.me-2 {
+    margin-right: 0.5rem !important;
+}
+
+.navbar-nav .nav-item form button.nav-link,
+.navbar .navbar-nav .nav-item form button[type="submit"].nav-link,
+.navbar button.nav-link,
+.navbar button.btn-nav-home {
+    background-color: transparent !important;
+    background-image: none !important;
+    background: none !important;
+    border: none !important;
+    color: var(--white) !important;
+    font-weight: 500;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Completely reset all button properties */
+.navbar-nav form button {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background: none !important;
+    background-color: transparent !important;
+    border: none !important;
+    color: var(--white) !important;
+}
+
+/* Add this after all other button styles in your CSS */
+button[type="submit"].nav-link,
+.navbar button.nav-link {
+    background: none !important;
+    background-color: transparent !important;
+}
+
+/* Override the hover state as well */
+.navbar-nav .nav-item form button.nav-link:hover,
+.navbar-nav .nav-item form button[type="submit"].nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}

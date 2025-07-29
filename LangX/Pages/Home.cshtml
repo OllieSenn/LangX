@@ -1,0 +1,941 @@
+﻿@page
+@using System.Security.Claims
+@model LangX.Pages.HomeModel
+@{
+    ViewData["Title"] = "Home";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LangX</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/site.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <meta name="user-id" content="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" />
+    <style>
+        /* Style for already liked posts */
+        .like-button.liked {
+            color: #dc3545;
+        }
+
+            .like-button.liked i {
+                color: #dc3545;
+            }
+
+        .username-link {
+            color: inherit;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+            .username-link:hover {
+                text-decoration: underline;
+                color: #0d6efd;
+                cursor: pointer;
+            }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        .end-message {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .btn-nav-home {
+            background: none !important;
+            color: black !important; 
+            padding: 0.25rem 0.4rem !important;
+            font-size: 1rem !important;
+            margin: 0;
+            border-radius: 3px !important;
+            transition: background-color 0.3s ease !important;
+            border: none !important; 
+        }
+
+            .btn-nav-home:hover {
+                background-color: var(--blue) !important;
+                color: white !important; 
+            }
+
+        .btn.btn-nav-home {
+            background: none !important;
+            color: black !important;
+        }
+
+        /* Delete button styling */
+        .delete-btn {
+            background-color: transparent !important;
+            border: none !important;
+            color: #dc3545 !important; /* Red color for delete */
+            padding: 0rem !important;
+            margin: 0 !important;
+            line-height: 1 !important;
+            border-radius: 4px !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 15px !important; /* Fixed width for square shape */
+            height: 15px !important; /* Fixed height for square shape */
+        }
+
+            .delete-btn:hover {
+                background-color: rgba(220, 53, 69, 0.1) !important; /* Light red background on hover */
+                transform: translateY(-1px) !important; /* Slight lift effect */
+                color: #bb2d3b !important; /* Darker red on hover */
+            }
+
+            .delete-btn:active {
+                transform: translateY(0) !important; /* Press effect */
+            }
+
+            .delete-btn i {
+                font-size: 0.95rem !important; /* Slightly larger icon than button text */
+            }
+
+            /* Remove any Bootstrap button shadow */
+            .delete-btn:focus,
+            .delete-btn:active {
+                box-shadow: none !important;
+                outline: none !important;
+            }
+
+
+    </style>
+</head>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">LangX</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <form method="get" action="/Home" style="margin:0; padding:0;">
+                        <button type="submit" class="nav-link active" style="background-color: transparent !important; background: none !important; color: black !important;">
+                            Home
+                        </button>
+                    </form>
+                </li>
+                <li class="nav-item">
+                    <form method="post" style="margin:0; padding:0;">
+                        <button type="submit" asp-page-handler="ViewProfile" class="nav-link" style="background-color: transparent !important; background: none !important; color: black !important;">
+                             Profile
+                        </button>
+                    </form>
+                </li>
+                <li class="nav-item">
+                    <form method="post" asp-page-handler="LogOut" style="margin:0; padding:0;">
+                        <button type="submit" class="nav-link" style="background-color: transparent !important; background: none !important; color: black !important;">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+@if (TempData["SharedQuestion"] != null)
+{
+    <div class="container mt-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["SharedQuestion"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+<!-- Main Content -->
+<div class="container mt-4">
+    <p class="mb-4">Welcome, @User.Identity.Name!</p>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-center gap-3">
+                <a asp-page="Excercises" class="btn btn-primary">
+                    Language Exercises
+                </a>
+                <a asp-page="ProficiencyQuiz" class="btn btn-success">
+                    Proficiency Quiz
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <div class="row">
+            <div class="col-md-3">
+                <h5>Suggested Users</h5>
+                <ul class="list-group">
+                <li class="list-group-item">
+                <a asp-page="/Home" asp-page-handler="ViewUserProfile" asp-route-username="JoeJabba" class="username-link">
+                    JoeJabba
+                </a>
+                </li>
+                <li class="list-group-item">
+                <a asp-page="/Home" asp-page-handler="ViewUserProfile" asp-route-username="joelyroly" class="username-link">
+                    joelyroly
+                </a>
+                </li>
+                <li class="list-group-item">
+                <a asp-page="/Home" asp-page-handler="ViewUserProfile" asp-route-username="testuser1" class="username-link">
+                    testuser1
+                </a>
+                </li>
+                </ul>
+            </div>
+
+            <div class="col-md-6">
+                <!-- Create Post Form -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Share with the community</h5>
+                        <form method="post" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-3">
+                                <textarea name="NewPost.Content" id="NewPost_Content" class="form-control" rows="3" placeholder="What are you learning today?"></textarea>
+                                <span asp-validation-for="NewPost.Content" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Add an image (optional)</label>
+                                <input name="NewPost.Image" id="NewPost_Image" type="file" accept="image/*" class="form-control">
+                                <span class="text-muted small">You can post without adding an image</span>
+                                <span asp-validation-for="NewPost.Image" class="text-danger"></span>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Post</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Posts Feed -->
+                <div id="posts-container">
+                @if (Model.Posts != null && Model.Posts.Any())
+                {
+                    foreach (var post in Model.Posts)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+                                         style="width: 40px; height: 40px;">
+                                        @((post.UserName != null && post.UserName.Length > 0) ? post.UserName.Substring(0, 1).ToUpper() : "U")
+                                    </div>
+                                    <div class="ms-2">
+                                        <a asp-page="/Home" asp-page-handler="ViewUserProfile" asp-route-username="@post.UserName" class="username-link">
+                                            @(post.UserName ?? "Anonymous")
+                                        </a>
+                                        <small class="text-muted">@(post.CreatedAt.ToString("MMM d, yyyy h:mm tt"))</small>
+                                    </div>
+                                </div>
+
+                                <p class="card-text">@(post.Content ?? "")</p>
+
+                                @if (!string.IsNullOrEmpty(post.ImagePath))
+                                {
+                                    <div class="mb-3">
+                                        <img src="@post.ImagePath" alt="Post image" class="img-fluid rounded">
+                                    </div>
+                                }
+
+                                <div class="d-flex gap-2">
+                                    @{
+                                        // Check if current user already liked this post
+                                        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                                        var alreadyLiked = Model.UserLikes != null &&
+                                        Model.UserLikes.Any(ul => ul.UserId == userId && ul.PostId == post.Id);
+                                        var buttonClass = alreadyLiked ? "btn btn-light like-button liked" : "btn btn-light like-button";
+                                        var heartIcon = alreadyLiked ? "bi-heart-fill" : "bi-heart";
+                                    }
+                                    <button class="@buttonClass" data-post-id="@post.Id" data-already-liked="@alreadyLiked.ToString().ToLower()">
+                                        <i class="bi @heartIcon"></i> <span class="likes-count">@post.LikesCount</span> Likes
+                                    </button>
+                                    <button class="btn btn-light comment-toggle-btn" data-bs-toggle="collapse" data-bs-target="#comments-@post.Id">
+                                        <i class="bi bi-chat"></i> <span>@(post.Comments?.Count ?? 0)</span> Comments
+                                    </button>
+                                </div>
+
+                                    <!-- Comment section (initially collapsed) -->
+                                    <div class="collapse mt-3" id="comments-@post.Id">
+                                        <!-- Display existing comments -->
+                                        @if (post.Comments != null && post.Comments.Any())
+                                        {
+                                            <div class="mb-3">
+                                                @foreach (var comment in post.Comments)
+                                                {
+                                                    <div class="d-flex mb-2">
+                                                        <div class="rounded-circle bg-light text-dark d-flex align-items-center justify-content-center me-2"
+                                                             style="width: 32px; height: 32px; flex-shrink: 0;">
+                                                            @((comment.UserName != null && comment.UserName.Length > 0) ? comment.UserName.Substring(0, 1).ToUpper() : "U")
+                                                        </div>
+                                                        <div class="card w-100">
+                                                            <div class="card-body py-2 px-3">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <span class="fw-bold small">
+                                                                        <a asp-page="ViewUser" asp-route-username="@comment.UserName" class="username-link">
+                                                                            @comment.UserName
+                                                                        </a>
+                                                                    </span>
+                                                                    <div>
+                                                                        <small class="text-muted me-2">@comment.CreatedAt.ToString("MMM d, h:mm tt")</small>
+
+                                                                        @{
+                                                                            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                                                                            var isPostOwner = post.UserId == currentUserId;
+                                                                            var isCommentOwner = comment.UserId == currentUserId;
+                                                                        }
+
+                                                                        @if (isPostOwner || isCommentOwner)
+                                                                        {
+                                                                            <form method="post" asp-page-handler="DeleteComment" asp-route-commentId="@comment.Id"
+                                                                                onsubmit="return confirm('Are you sure you want to delete this comment?');"
+                                                                                 style="display: inline;">
+                                                                                <button type="submit" class="delete-btn" title="Delete comment">
+                                                                                    <i class="bi bi-trash"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                                <p class="mb-0 small">@comment.Content</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+                                        <!-- Add new comment form -->
+                                        <form method="post" asp-page-handler="Comment" class="comment-form">
+                                            <input type="hidden" name="NewComment.PostId" value="@post.Id" />
+                                            <div class="input-group">
+                                                <input type="text"
+                                                       name="NewComment.Content"
+                                                       class="form-control"
+                                                       placeholder="Write a comment..."
+                                                       required
+                                                       maxlength="500" />
+                                                <button type="submit"
+                                                        class="btn btn-primary">
+                                                    <i class="bi bi-send"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        No posts to display. Be the first to share!
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+    </div>
+    <div class="loading-spinner" id="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading more posts...</p>
+    </div>
+
+    <!-- End of posts message -->
+    <div class="end-message" id="end-message">
+        <p class="text-muted">You've reached the end of the feed!</p>
+    </div>
+
+    <!-- hidden fields to store current state -->
+    <input type="hidden" id="current-page" value="0" />
+    <input type="hidden" id="has-more-posts" value="@Model.HasMorePosts.ToString().ToLower()" />
+
+    <!-- anti-forgery token in a hidden field for JavaScript access -->
+    @Html.AntiForgeryToken()
+
+    
+   
+    <script>
+                document.addEventListener('DOMContentLoaded', function() {
+            // Get all like buttons
+            const likeButtons = document.querySelectorAll('.like-button');
+
+            // Add click event listener to each button
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Check if user already liked this post
+                    const alreadyLiked = this.getAttribute('data-already-liked') === 'true';
+                    if (alreadyLiked) {
+                        // If already liked, don't do anything
+                        return;
+                    }
+
+                    // Get the post ID from data attribute
+                    const postId = this.getAttribute('data-post-id');
+                    const likesSpan = this.querySelector('.likes-count');
+                    const heartIcon = this.querySelector('i');
+                    const currentLikes = parseInt(likesSpan.textContent);
+
+                    // Don't update UI yet - wait for server response
+
+                    // Get the anti-forgery token
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                    // Create request options
+                    const options = {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'RequestVerificationToken': token
+                        },
+                        body: 'postId=' + postId
+                    };
+
+                    // Send the request
+                    fetch('?handler=Like', options)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                // Only update UI after successful server response
+                                likesSpan.textContent = data.likesCount;
+                                heartIcon.classList.remove('bi-heart');
+                                heartIcon.classList.add('bi-heart-fill');
+                                this.classList.add('liked');
+                                this.setAttribute('data-already-liked', 'true');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+
+            // Comment form submission
+            const commentForms = document.querySelectorAll('.comment-form');
+
+            commentForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const postId = this.querySelector('input[name="NewComment.PostId"]').value;
+                    const commentInput = this.querySelector('input[name="NewComment.Content"]');
+                    const commentContent = commentInput.value.trim();
+
+                    if (!commentContent) return;
+
+                    // Get anti-forgery token
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                    // Create form data
+                    const formData = new FormData();
+                    formData.append('NewComment.PostId', postId);
+                    formData.append('NewComment.Content', commentContent);
+
+                    // Create request options
+                    const options = {
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': token
+                        },
+                        body: formData
+                    };
+
+                    // Send request
+                    fetch('?handler=Comment', options)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            // Refresh the page to show the new comment
+                            window.location.reload();
+                        })
+                        .catch(error => {
+                            console.error('Error posting comment:', error);
+                        });
+
+                    // Clear the input field
+                    commentInput.value = '';
+                });
+            });
+
+            // Toggle comment section visibility
+                const commentToggleBtns = document.querySelectorAll('.comment-toggle-btn');
+                commentToggleBtns.forEach(btn => {
+                const targetId = btn.getAttribute('data-bs-target');
+                if (targetId) {
+                    const collapseElement = document.querySelector(targetId);
+                    if (collapseElement) {
+                        collapseElement.addEventListener('shown.bs.collapse', function() {
+                        btn.classList.add('active', 'text-primary');
+                    });
+                collapseElement.addEventListener('hidden.bs.collapse', function() {
+                    btn.classList.remove('active', 'text-primary');
+                });
+                }
+            }
+          });
+       });
+
+        document.addEventListener('DOMContentLoaded', function() {
+        // Pagination variables
+        const POSTS_PER_PAGE = 50;
+        let currentPage = parseInt(document.getElementById('current-page').value) || 0;
+        let hasMorePosts = document.getElementById('has-more-posts').value === 'true';
+        let isLoading = false;
+
+        // DOM elements
+        const postsContainer = document.getElementById('posts-container');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const endMessage = document.getElementById('end-message');
+        const paginationContainer = createPaginationContainer();
+
+        // Create and insert pagination container
+        function createPaginationContainer() {
+            const container = document.createElement('div');
+            container.className = 'pagination-container d-flex justify-content-center my-4';
+
+            // Insert the pagination container after the posts container
+            postsContainer.parentNode.insertBefore(container, postsContainer.nextSibling);
+            return container;
+        }
+
+        // Create/update pagination controls
+        function updatePaginationControls() {
+            // Clear existing pagination controls
+            paginationContainer.innerHTML = '';
+
+            // Create pagination nav
+            const nav = document.createElement('nav');
+            nav.setAttribute('aria-label', 'Posts pagination');
+
+            const ul = document.createElement('ul');
+            ul.className = 'pagination';
+
+            // Previous button
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage <= 0 ? 'disabled' : ''}`;
+
+            const prevLink = document.createElement('a');
+            prevLink.className = 'page-link';
+            prevLink.href = '#';
+            prevLink.textContent = 'Previous';
+            prevLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentPage > 0) {
+                    navigateToPage(currentPage - 1);
+                }
+            });
+
+            prevLi.appendChild(prevLink);
+            ul.appendChild(prevLi);
+
+            // Page numbers
+            // Show current page, 2 pages before and 2 pages after if available
+            const totalPages = calculateTotalPages();
+            const startPage = Math.max(0, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 3); // +3 because the loop is exclusive of endPage
+
+            for (let i = startPage; i < endPage; i++) {
+                const pageLi = document.createElement('li');
+                pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
+
+                const pageLink = document.createElement('a');
+                pageLink.className = 'page-link';
+                pageLink.href = '#';
+                pageLink.textContent = (i + 1).toString();
+
+                if (i !== currentPage) {
+                    pageLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        navigateToPage(i);
+                    });
+                }
+
+                pageLi.appendChild(pageLink);
+                ul.appendChild(pageLi);
+            }
+
+            // Next button
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${!hasMorePosts && currentPage >= totalPages - 1 ? 'disabled' : ''}`;
+
+            const nextLink = document.createElement('a');
+            nextLink.className = 'page-link';
+            nextLink.href = '#';
+            nextLink.textContent = 'Next';
+            nextLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (hasMorePosts || currentPage < totalPages - 1) {
+                    navigateToPage(currentPage + 1);
+                }
+            });
+
+            nextLi.appendChild(nextLink);
+            ul.appendChild(nextLi);
+
+            nav.appendChild(ul);
+            paginationContainer.appendChild(nav);
+        }
+
+        // Calculate total pages based on current knowledge
+        function calculateTotalPages() {
+            // We don't know the exact total, but we know there's at least
+            // currentPage + 1 pages, and if hasMorePosts is true, at least currentPage + 2
+            return hasMorePosts ? currentPage + 2 : currentPage + 1;
+        }
+
+        // Navigate to a specific page
+        function navigateToPage(pageNumber) {
+            if (isLoading) return;
+            if (pageNumber === currentPage) return;
+
+            isLoading = true;
+            currentPage = pageNumber;
+
+            // Update hidden field
+            document.getElementById('current-page').value = currentPage;
+
+            // Show loading spinner
+            loadingSpinner.style.display = 'block';
+
+            // Scroll to top of posts container
+            postsContainer.scrollIntoView({ behavior: 'smooth' });
+
+            // Get the anti-forgery token
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            // Create fetch options
+            const options = {
+                method: 'GET',
+                headers: {
+                    'RequestVerificationToken': token
+                }
+            };
+
+            // Add cache-busting parameter
+            const timestamp = new Date().getTime();
+
+            // Fetch the page with posts per page parameter
+            fetch(`?handler=LoadMorePosts&page=${currentPage}&postsPerPage=${POSTS_PER_PAGE}&_=${timestamp}`, options)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Hide loading spinner
+                    loadingSpinner.style.display = 'none';
+
+                    // Clear existing posts
+                    postsContainer.innerHTML = '';
+
+                    // Update whether there are more posts
+                    hasMorePosts = data.hasMorePosts;
+                    document.getElementById('has-more-posts').value = hasMorePosts.toString();
+
+                    // Show end message if no more posts and no posts were returned
+                    if (!hasMorePosts && (!data.posts || data.posts.length === 0)) {
+                        endMessage.style.display = 'block';
+                    } else {
+                        endMessage.style.display = 'none';
+                    }
+
+                    // If we have posts, render them
+                    if (data.posts && data.posts.length > 0) {
+                        appendPosts(data.posts, data.userLikes);
+                    } else if (currentPage > 0) {
+                        // If no posts were returned and we're not on page 0,
+                        // try going back to page 0
+                        navigateToPage(0);
+                        return;
+                    }
+
+                    // Update pagination controls
+                    updatePaginationControls();
+
+                    isLoading = false;
+                })
+                .catch(error => {
+                    console.error('Error loading posts:', error);
+                    loadingSpinner.style.display = 'none';
+                    isLoading = false;
+                });
+        }
+
+        function appendPosts(posts, userLikes) {
+            // Get the current user ID
+            const userId = document.querySelector('meta[name="user-id"]')?.getAttribute('content') || '';
+
+            posts.forEach(post => {
+                // Check if the current user has liked this post
+                const alreadyLiked = userLikes && userLikes.some(ul => ul.postId === post.id && ul.userId === userId);
+                const buttonClass = alreadyLiked ? "btn btn-light like-button liked" : "btn btn-light like-button";
+                const heartIcon = alreadyLiked ? "bi-heart-fill" : "bi-heart";
+
+                // Format the date
+                const postDate = new Date(post.createdAt);
+                const formattedDate = postDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true
+                });
+
+                // Create the post HTML
+                const postElement = document.createElement('div');
+
+                // Build post HTML
+                postElement.innerHTML = `
+                    <div class="card mb-3" data-post-id="${post.id}">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+                                     style="width: 40px; height: 40px;">
+                                    ${post.userName && post.userName.length > 0 ? post.userName.substring(0, 1).toUpperCase() : "U"}
+                                </div>
+                                <div class="ms-2">
+                                    <a href="/Home?handler=ViewUserProfile&username=${encodeURIComponent(post.userName)}" class="username-link">
+                                        ${post.userName || "Anonymous"}
+                                    </a>
+                                    <small class="text-muted">${formattedDate}</small>
+                                </div>
+                            </div>
+
+                            <p class="card-text">${post.content || ""}</p>
+
+                            ${post.imagePath ? `
+                                <div class="mb-3">
+                                    <img src="${post.imagePath}" alt="Post image" class="img-fluid rounded">
+                                </div>
+                            ` : ''}
+
+                            <div class="d-flex gap-2">
+                                <button class="${buttonClass}" data-post-id="${post.id}" data-already-liked="${alreadyLiked ? 'true' : 'false'}">
+                                    <i class="bi ${heartIcon}"></i> <span class="likes-count">${post.likesCount}</span> Likes
+                                </button>
+                                <button class="btn btn-light comment-toggle-btn" data-bs-toggle="collapse" data-bs-target="#comments-${post.id}">
+                                    <i class="bi bi-chat"></i> <span>${post.comments ? post.comments.length : 0}</span> Comments
+                                </button>
+                            </div>
+
+                            <!-- Comment section (initially collapsed) -->
+                            <div class="collapse mt-3" id="comments-${post.id}">
+                                <!-- Display existing comments -->
+                                ${post.comments && post.comments.length > 0 ? `
+                                    <div class="mb-3">
+                                        ${post.comments.map(comment => {
+                                            const commentDate = new Date(comment.createdAt);
+                                            const formattedCommentDate = commentDate.toLocaleDateString('en-US', {
+                                                month: 'short',
+                                                day: 'numeric',
+                                                hour: 'numeric',
+                                                minute: 'numeric',
+                                                hour12: true
+                                            });
+
+                                            return `
+                                                <div class="d-flex mb-2">
+                                                    <div class="rounded-circle bg-light text-dark d-flex align-items-center justify-content-center me-2"
+                                                         style="width: 32px; height: 32px; flex-shrink: 0;">
+                                                        ${comment.userName && comment.userName.length > 0 ? comment.userName.substring(0, 1).toUpperCase() : "U"}
+                                                    </div>
+                                                    <div class="card w-100">
+                                                        <div class="card-body py-2 px-3">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <span class="fw-bold small">
+                                                                    <a href="/ViewUser?username=${encodeURIComponent(comment.userName)}" class="username-link">
+                                                                        ${comment.userName}
+                                                                    </a>
+                                                                </span>
+                                                                <small class="text-muted">${formattedCommentDate}</small>
+                                                            </div>
+                                                            <p class="mb-0 small">${comment.content}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                ` : ''}
+
+                                <!-- Add new comment form -->
+                                <form method="post" asp-page-handler="Comment" class="comment-form">
+                                    <input type="hidden" name="NewComment.PostId" value="${post.id}" />
+                                    <div class="input-group">
+                                        <input type="text"
+                                               name="NewComment.Content"
+                                               class="form-control"
+                                               placeholder="Write a comment..."
+                                               required
+                                               maxlength="500" />
+                                        <button type="submit"
+                                                class="btn btn-primary">
+                                            <i class="bi bi-send"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Append to posts container
+                postsContainer.appendChild(postElement.firstElementChild);
+
+                // Add event listeners to the newly added like buttons
+                setupLikeButton(postElement.querySelector('.like-button'));
+
+                // Add event listeners to the newly added comment forms
+                setupCommentForm(postElement.querySelector('.comment-form'));
+            });
+        }
+
+        // Set up like button for dynamically added content
+        function setupLikeButton(button) {
+            if (!button) return;
+
+            button.addEventListener('click', function() {
+                // Check if user already liked this post
+                const alreadyLiked = this.getAttribute('data-already-liked') === 'true';
+                if (alreadyLiked) {
+                    // If already liked, don't do anything
+                    return;
+                }
+
+                // Get the post ID from data attribute
+                const postId = this.getAttribute('data-post-id');
+                const likesSpan = this.querySelector('.likes-count');
+                const heartIcon = this.querySelector('i');
+
+                // Get the anti-forgery token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                // Create request options
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': token
+                    },
+                    body: 'postId=' + postId
+                };
+
+                // Send the request
+                fetch('?handler=Like', options)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Only update UI after successful server response
+                            likesSpan.textContent = data.likesCount;
+                            heartIcon.classList.remove('bi-heart');
+                            heartIcon.classList.add('bi-heart-fill');
+                            this.classList.add('liked');
+                            this.setAttribute('data-already-liked', 'true');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        }
+
+        // Set up comment form for dynamically added content
+        function setupCommentForm(form) {
+            if (!form) return;
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const postId = this.querySelector('input[name="NewComment.PostId"]').value;
+                const commentInput = this.querySelector('input[name="NewComment.Content"]');
+                const commentContent = commentInput.value.trim();
+
+                if (!commentContent) return;
+
+                // Get anti-forgery token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                // Create form data
+                const formData = new FormData();
+                formData.append('NewComment.PostId', postId);
+                formData.append('NewComment.Content', commentContent);
+
+                // Create request options
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    body: formData
+                };
+
+                // Send request
+                fetch('?handler=Comment', options)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        // Refresh the page to show the new comment
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error posting comment:', error);
+                    });
+
+                // Clear the input field
+                commentInput.value = '';
+            });
+        }
+
+        // Initial setup for existing buttons and forms
+        document.querySelectorAll('.like-button').forEach(setupLikeButton);
+        document.querySelectorAll('.comment-form').forEach(setupCommentForm);
+
+        // Create pagination controls on page load
+        updatePaginationControls();
+
+        // If we're not on page 0, we should load the current page
+        // This handles cases where the user navigates back to this page
+        if (currentPage > 0) {
+            navigateToPage(currentPage);
+        }
+    }
+);
+    </script>
+
+</html>

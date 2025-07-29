@@ -1,0 +1,174 @@
+﻿@page "{id:int}"
+@model LangX.Pages.Posts.DetailsModel
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Post Details";
+    Layout = null;
+}
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LangX</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .username-link {
+            color: inherit;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+            .username-link:hover {
+                text-decoration: underline;
+                color: #0d6efd;
+                cursor: pointer;
+            }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">LangX</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <form method="get" action="/Profile/@User.Identity.Name" style="margin:0; padding:0;">
+                            <button type="submit" class="nav-link active" style="background-color: transparent !important; background: none !important; color: black !important;">
+                                Home
+                            </button>
+                        </form>
+                    </li>
+                    <li class="nav-item">
+                        <form method="post" asp-page-handler="LogOut" style="margin:0; padding:0;">
+                            <button type="submit" class="nav-link" style="background-color: transparent !important; background: none !important; color: black !important;">
+                                Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                @if (Model.Post != null)
+                {
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h4>Post by <a asp-page="/Profile" asp-route-username="@Model.Post.UserName" class="text-white">@Model.Post.UserName</a></h4>
+                            <a href="/Profile/@User.Identity.Name" class="btn btn-sm btn-light">
+                                <i class="bi bi-arrow-left"></i> Go Back
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="post-meta text-muted small mb-3">
+                                <span><i class="bi bi-person-circle"></i> @Model.Post.UserName</span>
+                                <span class="ms-3"><i class="bi bi-calendar"></i> @Model.Post.CreatedAt.ToString("MMM dd, yyyy h:mm tt")</span>
+                                <span class="ms-3"><i class="bi bi-hand-thumbs-up"></i> @Model.Post.LikesCount Likes</span>
+                                <span class="ms-3"><i class="bi bi-chat"></i> @Model.Post.Comments.Count Comments</span>
+                            </div>
+
+                            <!-- Post Content -->
+                            <div class="post-content mb-4">
+                                @Html.Raw(Model.Post.Content)
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Model.Post.ImagePath))
+                            {
+                                <div class="post-image mb-4">
+                                    <img src="@Model.Post.ImagePath" alt="Post Image" class="img-fluid rounded">
+                                </div>
+                            }
+
+                            <!-- Like button -->
+                            <div class="d-flex mb-4">
+                                <form method="post" asp-page="/Details" asp-page-handler="LikePost">
+                                    <input type="hidden" name="postId" value="@Model.Post.Id" />
+                                    <button type="submit" class="btn @(Model.IsLikedByCurrentUser ? "btn-danger" : "btn-outline-danger")">
+                                        <i class="bi @(Model.IsLikedByCurrentUser ? "bi-heart-fill" : "bi-heart")"></i>
+                                        Like @(Model.Post.LikesCount > 0 ? $"({Model.Post.LikesCount})" : "")
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Comments Section -->
+                            <h5 class="mb-3">Comments (@Model.Post.Comments.Count)</h5>
+
+                            <!-- Comment form -->
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <form method="post" asp-page="/Details" asp-page-handler="AddComment" class="mb-4">
+                                    <input type="hidden" name="postId" value="@Model.Post.Id" />
+                                    <div class="mb-3">
+                                        <textarea name="commentContent" class="form-control" rows="3"
+                                                  placeholder="Write your comment here..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-send"></i> Post Comment
+                                    </button>
+                                </form>
+                            }
+
+                            <!-- Comments list -->
+                            <div class="comments-container">
+                                @if (Model.Post.Comments != null && Model.Post.Comments.Any())
+                                {
+                                    @foreach (var comment in Model.Post.Comments.OrderByDescending(c => c.CreatedAt))
+                                    {
+                                        <div class="card mb-3">
+                                            <div class="card-body py-3">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <div>
+                                                        <a asp-page="/Profile" asp-route-username="@comment.UserName"
+                                                           class="fw-bold username-link">@comment.UserName</a>
+                                                        <small class="text-muted ms-2">@comment.CreatedAt.ToString("MMM dd, yyyy h:mm tt")</small>
+                                                    </div>
+
+                                                    @if (comment.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) ||
+                                                   Model.Post.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                                                    {
+                                                        <form method="post" asp-for="/Details" asp-page-handler="DeleteComment"
+                                                              onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                                                            <input type="hidden" name="commentId" value="@comment.Id" />
+                                                            <input type="hidden" name="postId" value="@Model.Post.Id" />
+                                                            <button type="submit" class="btn btn-sm btn-link text-danger p-0"
+                                                                    title="Delete comment">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                </div>
+                                                <p class="mb-0">@comment.Content</p>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p class="text-muted">No comments yet. Be the first to comment!</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <h4>Post not found</h4>
+                        <p>The post you're looking for doesn't exist or has been removed.</p>
+                        <a href="/Home" class="btn btn-primary">Go to Home</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
